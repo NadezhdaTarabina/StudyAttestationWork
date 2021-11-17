@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/chat_bottom_navigator"
+        android:enabled="true"
+        android:icon="@drawable/chat_icon"
+        android:title="@string/chat" />
+
+<!---
+    <item
+        android:id="@+id/voice_bottom_navigator"
+        android:enabled="true"
+        android:icon="@drawable/voice_icon"
+        android:title="@string/voice"/>
+-->
+    <item
+        android:id="@+id/share_bottom_navigator"
+        android:enabled="true"
+        android:icon="@drawable/share_icon"
+        android:title="@string/share"/>
+</menu>

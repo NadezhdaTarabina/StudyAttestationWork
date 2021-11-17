@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Companion</string>
+    <string name="chat">chat</string>
+    <string name="voice">voice</string>
+    <string name="settings">settings</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enter_message">Enter message</string>
+    <string name="send">send</string>
+    <string name="share">share</string>
+</resources>
