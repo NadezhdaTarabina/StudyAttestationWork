@@ -8,18 +8,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 const val MY_NAME: String = "YOU"
 private const val LAST_SELECTED_ITEM: String = "LAST_SELECTED_ITEM"
+private val CHAT_FRAGMENT = ChatFragment().javaClass.name
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
-    private val CHAT_FRAGMENT = CompanionChatFragment().javaClass.name
-    private val SHARE_FRAGMENT = ShareFragment().javaClass.name
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val companionChatFragment: Fragment = CompanionChatFragment()
+        val companionChatFragment: Fragment = ChatFragment()
         val shareFragment: Fragment = ShareFragment()
 
         supportFragmentManager

@@ -22,7 +22,7 @@ private const val ARRAY_MESSAGE = "ARRAY_MESSAGE"
 private const val ARRAY_SIZE = "ARRAY_SIZE"
 
 
-class CompanionChatFragment : Fragment() {
+class ChatFragment : Fragment() {
 
 
     private lateinit var companionImageView: ImageView
