@@ -9,6 +9,5 @@ class MessageListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
 
     fun bind(message: Message) {
         massageText.text = message.message
-
     }
 }

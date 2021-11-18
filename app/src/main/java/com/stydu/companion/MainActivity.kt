@@ -7,10 +7,13 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 const val MY_NAME: String = "YOU"
-private const val LAST_SELECTED_ITEM: String ="LAST_SELECTED_ITEM"
+private const val LAST_SELECTED_ITEM: String = "LAST_SELECTED_ITEM"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
+    private val CHAT_FRAGMENT = CompanionChatFragment().javaClass.name
+    private val SHARE_FRAGMENT = ShareFragment().javaClass.name
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +31,12 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             var fragment: Fragment? = null
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.chat_bottom_navigator -> {
-                    fragment = companionChatFragment
+                    fragment =
+                        savedInstanceState?.let {
+                            supportFragmentManager.getFragment(it, CHAT_FRAGMENT)
+                        } ?: companionChatFragment
                 }
                 R.id.share_bottom_navigator -> {
                     fragment = shareFragment
@@ -43,23 +49,25 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.selectedItemId =
             savedInstanceState?.getInt(LAST_SELECTED_ITEM) ?: R.id.chat_bottom_navigator
 
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+
+        outState.putInt(LAST_SELECTED_ITEM, bottomNavigationView.selectedItemId)
+        val fragment = supportFragmentManager.fragments.last()
+        supportFragmentManager.putFragment(outState, fragment.javaClass.name, fragment)
+
         super.onSaveInstanceState(outState)
-        outState.putInt(LAST_SELECTED_ITEM,bottomNavigationView.selectedItemId)
 
     }
 
-    private fun replaceFragment (fragment: Fragment){
+    private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container,fragment)
+            .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
     }
-
 
 }
 

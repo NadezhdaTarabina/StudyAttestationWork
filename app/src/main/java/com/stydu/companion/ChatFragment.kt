@@ -21,17 +21,9 @@ private const val ARRAY_USER = "ARRAY_USER"
 private const val ARRAY_MESSAGE = "ARRAY_MESSAGE"
 private const val ARRAY_SIZE = "ARRAY_SIZE"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CompanionChatFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-private const val KEY = "KEY"
 
 class CompanionChatFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
 
     private lateinit var companionImageView: ImageView
     private lateinit var sentButton: Button
@@ -42,7 +34,25 @@ class CompanionChatFragment : Fragment() {
     private var messageList: ArrayList<Message> = ArrayList()
 
 
-    @SuppressLint("WrongConstant")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            val arrayMessageAdapterUser =
+                savedInstanceState.getStringArrayList(ARRAY_USER) as ArrayList<String>
+
+            val arrayMessageAdapterMessageText =
+                savedInstanceState.getStringArrayList(ARRAY_MESSAGE) as ArrayList<String>
+
+            for (i in 0 until savedInstanceState.getInt(ARRAY_SIZE)) {
+                val message = Message(arrayMessageAdapterUser[i], arrayMessageAdapterMessageText[i])
+                messageList.add(message)
+            }
+        }
+    }
+
+
+    @SuppressLint("WrongConstant", "NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,32 +77,13 @@ class CompanionChatFragment : Fragment() {
         messageRecyclerView = view.findViewById(R.id.message_list_recycler_view)
         val layoutManagerMessageRecyclerView = LinearLayoutManager(view.context)
         messageRecyclerView.layoutManager = layoutManagerMessageRecyclerView
-        adapterMessageRecyclerView = MessageListAdapter(view.context)
+        adapterMessageRecyclerView = MessageListAdapter(messageList)
         messageRecyclerView.adapter = adapterMessageRecyclerView
-
-        //Restoring data from savedInstanceState
-        if (savedInstanceState != null){
-            val arrayMessageAdapterUser =
-                savedInstanceState.getStringArrayList(ARRAY_USER) as ArrayList<String>
-
-            val arrayMessageAdapterMessageText =
-                savedInstanceState.getStringArrayList(ARRAY_MESSAGE) as ArrayList<String>
-
-            for (i in 0 until savedInstanceState.getInt(ARRAY_SIZE)){
-                val message = Message(arrayMessageAdapterUser[i], arrayMessageAdapterMessageText[i])
-                adapterMessageRecyclerView.addMessage(message) //!!!!!! Here this function does not work. works but is not displayed
-                messageList.add(message)
-            }
-
-
-        }
-
 
 
         //Initialization of message sending elements
         sentButton = view.findViewById(R.id.send_button)
         messageEditText = view.findViewById(R.id.message_edit_text)
-
 
         //Sending messages by the user
         sentButton.setOnClickListener {
@@ -102,7 +93,7 @@ class CompanionChatFragment : Fragment() {
 
                 messageEditText.text.clear()
                 messageList.add(messageMy)
-                adapterMessageRecyclerView.addMessage(messageMy) //!!!!!!!  The same function works here
+                adapterMessageRecyclerView.notifyDataSetChanged()
 
                 val inputManager =
                     activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -114,13 +105,12 @@ class CompanionChatFragment : Fragment() {
 
                 Thread.sleep(500)
                 companionAnim.start()
-                val messageCompanion = Message("Duck", "Quack, quack, quack")
+                val messageCompanion = Message("Duck", getMessageCompanion(messageMy.message))
                 messageList.add(messageCompanion)
-                adapterMessageRecyclerView.addMessage(messageCompanion)
-                layoutManagerMessageRecyclerView.scrollToPosition(adapterMessageRecyclerView.itemCount-1)
-            }
-            else {
-                Toast.makeText(activity,"Message should not be empty", Toast.LENGTH_SHORT).show()
+                adapterMessageRecyclerView.notifyDataSetChanged()
+                layoutManagerMessageRecyclerView.scrollToPosition(adapterMessageRecyclerView.itemCount - 1)
+            } else {
+                Toast.makeText(activity, "Message should not be empty", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -128,21 +118,19 @@ class CompanionChatFragment : Fragment() {
     }
 
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         //Saving data
         val arrayMessageAdapterUser: ArrayList<String> = ArrayList()
         val arrayMessageAdapterMessageText: ArrayList<String> = ArrayList()
-        for (i in 0 until messageList.size){
+        for (i in 0 until messageList.size) {
             arrayMessageAdapterUser.add(messageList[i].user)
             arrayMessageAdapterMessageText.add(messageList[i].message)
         }
-        outState.putStringArrayList(ARRAY_USER,arrayMessageAdapterUser)
-        outState.putStringArrayList(ARRAY_MESSAGE,arrayMessageAdapterMessageText)
-        outState.putInt(ARRAY_SIZE,arrayMessageAdapterUser.size)
+        outState.putStringArrayList(ARRAY_USER, arrayMessageAdapterUser)
+        outState.putStringArrayList(ARRAY_MESSAGE, arrayMessageAdapterMessageText)
+        outState.putInt(ARRAY_SIZE, arrayMessageAdapterUser.size)
 
         super.onSaveInstanceState(outState)
-
 
     }
 
@@ -152,6 +140,14 @@ class CompanionChatFragment : Fragment() {
             Configuration.ORIENTATION_PORTRAIT -> true
             Configuration.ORIENTATION_LANDSCAPE -> false
             else -> true
+        }
+    }
+
+    private fun getMessageCompanion(message: String): String {
+        return when (message.length) {
+            in 1..5 -> "Quack!"
+            in 5..30 -> "Quack, quack"
+            else -> "Quack, quack, quack"
         }
     }
 
